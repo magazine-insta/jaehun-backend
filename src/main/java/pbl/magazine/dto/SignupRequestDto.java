@@ -18,7 +18,7 @@ public class SignupRequestDto {
     @NotBlank(message = "값을 입력해주세요")
     private String nickname;
 
-    @Size(min = 4, message = "닉네임은 최소 4글자 이상이어야 합니다")
+    @Size(min = 4, message = "비밀번호는 최소 4글자 이상이어야 합니다")
     @NotBlank(message = "값을 입력해주세요")
     private String password;
 

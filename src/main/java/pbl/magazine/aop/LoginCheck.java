@@ -2,12 +2,10 @@ package pbl.magazine.aop;
 
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
-import pbl.magazine.model.ErrorMessage;
 import pbl.magazine.security.UserDetailsImpl;
 
 @Aspect
@@ -22,11 +20,11 @@ public class LoginCheck {
         }
     }
 
-//    @Before
-//    public ResponseEntity<ErrorMessage> onlyLogoutAccess() {
-//        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-//        if (auth.getPrincipal() instanceof UserDetailsImpl) {
-//
-//        }
-//    }
+    @Before("execution(public * pbl.magazine.controller.UserController..*(..))")
+    public void onlyLogoutAccess() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth.getPrincipal() instanceof UserDetailsImpl) {
+           throw new AccessDeniedException("이미 로그인이 되어있습니다");
+        }
+    }
 }

@@ -1,16 +1,11 @@
 package pbl.magazine.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.apache.tomcat.websocket.AuthenticationException;
-import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import pbl.magazine.dto.PostRequestDto;
 import pbl.magazine.dto.PostResponseDto;
 import pbl.magazine.model.User;
-import pbl.magazine.repository.UserRepository;
 import pbl.magazine.security.UserDetailsImpl;
 import pbl.magazine.service.PostService;
 
@@ -34,8 +29,7 @@ public class PostController {
 
     @PostMapping("/api/post")
     public PostResponseDto writePost(@RequestBody PostRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        User user = userDetails.getUser();
-        return postService.writePost(requestDto, user);
+        return postService.writePost(requestDto, userDetails.getUser());
     }
 
     @PutMapping("/api/post/{id}")
