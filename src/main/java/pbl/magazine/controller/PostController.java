@@ -23,8 +23,8 @@ public class PostController {
     }
 
     @GetMapping("/api/post/{id}")
-    public PostResponseDto getPost(@PathVariable Long id) {
-        return postService.getPost(id);
+    public PostResponseDto getPost(@PathVariable Long id, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return postService.getPost(id, userDetails.getUser());
     }
 
     @PostMapping("/api/post")

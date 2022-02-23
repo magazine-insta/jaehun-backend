@@ -5,10 +5,8 @@ import pbl.magazine.model.Likes;
 import pbl.magazine.model.Post;
 import pbl.magazine.model.User;
 
-import java.util.List;
 import java.util.Optional;
 
 public interface LikeRepository extends JpaRepository<Likes, Long> {
     Optional<Likes> findByPostAndUser(Post post, User user);
-    Long countByPost(Post post);
 }

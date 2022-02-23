@@ -1,5 +1,6 @@
 package pbl.magazine.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -18,12 +19,14 @@ public class Likes {
     @JoinColumn(name = "USER_ID")
     private User user;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "POST_ID")
+    @JsonBackReference
     private Post post;
 
     public Likes(Post post, User user) {
         this.post = post;
+        post.getLikes().add(this);
         this.user = user;
     }
 }

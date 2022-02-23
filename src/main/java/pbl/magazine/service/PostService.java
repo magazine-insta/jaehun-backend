@@ -1,6 +1,7 @@
 package pbl.magazine.service;
 
 import lombok.RequiredArgsConstructor;
+import org.graalvm.compiler.lir.LIRInstruction;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -27,33 +28,51 @@ public class PostService {
     private final LikeRepository likeRepository;
 
     public List<PostResponseDto> getListOfPost() {
-        List<Post> posts = postRepository.findAll();
+        Optional<User> user = getUser();
+        String presentUsername = "";
+        if (user.isPresent()) {
+            presentUsername = user.get().getUsername();
+        }
+        System.out.println("presentUsername = " + presentUsername);
+
+        List<Post> posts = postRepository.findAllPostByFetchJoin();
         List<PostResponseDto> responseDtoList = new ArrayList<>();
 
-        for (Post post : posts) {
-            Long likeCount = likeRepository.countByPost(post);
-            responseDtoList.add(new PostResponseDto(post, likeCount));
+        for (Post p : posts) {
+            PostResponseDto responseDto = new PostResponseDto(p);
+            responseDtoList.add(responseDto);
+            responseDto.changeIsLiked(isCurrentUserLiked(presentUsername, p));
         }
         return responseDtoList;
     }
 
-    public PostResponseDto getPost(Long id) {
+    private boolean isCurrentUserLiked(String username, Post p) {
+        if (!username.isEmpty()) {
+            for (Likes l : p.getLikes()) {
+                if (l.getUser().getUsername().equals(username))
+                    return true;
+            }
+        }
+        return false;
+    }
+
+
+    public PostResponseDto getPost(Long id, User user) {
         Post post = findPost(id);
-        Long likeCount = likeRepository.countByPost(post);
-        return new PostResponseDto(post, likeCount);
+        PostResponseDto responseDto = new PostResponseDto(post);
+        responseDto.changeIsLiked(isCurrentUserLiked(user.getUsername(), post));
+        return responseDto;
     }
 
     public PostResponseDto writePost(PostRequestDto requestDto, User user) {
         Post post = new Post(requestDto, user);
-        return new PostResponseDto(postRepository.save(post), 0L);
+        return new PostResponseDto(postRepository.save(post));
     }
 
     @Transactional
     public Long updatePost(Long id, PostRequestDto requestDto) {
         Post post = findPost(id);
-
         checkUser(post.getUser().getUsername());
-
         post.update(requestDto);
         return id;
     }
@@ -75,6 +94,14 @@ public class PostService {
             likeRepository.save(new Likes(post, user));
         }
         return post_id;
+    }
+
+    private Optional<User> getUser() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth.getPrincipal() instanceof UserDetailsImpl) {
+            UserDetailsImpl userDetails = (UserDetailsImpl) auth.getPrincipal();
+            return Optional.of(userDetails.getUser());
+        } else return Optional.empty();
     }
 
     private Post findPost(Long id) {

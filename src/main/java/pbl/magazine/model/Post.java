@@ -1,10 +1,14 @@
 package pbl.magazine.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import pbl.magazine.dto.PostRequestDto;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -25,9 +29,13 @@ public class Post extends Timestamped {
     @Column
     private String contentImg;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "USER_ID")
     private User user;
+
+    @OneToMany(mappedBy = "post")
+    @JsonManagedReference
+    private final List<Likes> likes = new ArrayList<>();
 
     public Post(PostRequestDto requestDto, User user) {
         this.title = requestDto.getTitle();

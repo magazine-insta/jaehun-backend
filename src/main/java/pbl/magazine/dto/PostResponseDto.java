@@ -15,15 +15,20 @@ public class PostResponseDto {
     private String contentImg;
     private LocalDateTime createdAt;
     private String nickname;
-    private Long likeCount;
+    private int likeCount;
+    private boolean isLiked = false;
 
-    public PostResponseDto(Post post, Long likeCount) {
+    public PostResponseDto(Post post) {
         this.id = post.getId();
         this.title = post.getTitle();
         this.contentText = post.getContentText();
         this.contentImg = post.getContentImg();
         this.createdAt = post.getCreatedAt();
         this.nickname = post.getUser().getNickname();
-        this.likeCount = likeCount;
+        this.likeCount = post.getLikes().size();
+    }
+
+    public void changeIsLiked(boolean b) {
+        this.isLiked = true;
     }
 }
