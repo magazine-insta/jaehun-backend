@@ -3,9 +3,6 @@ package pbl.magazine.model;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
-
 import javax.persistence.*;
 
 @Entity

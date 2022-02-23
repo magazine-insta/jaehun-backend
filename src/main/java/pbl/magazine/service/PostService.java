@@ -1,7 +1,6 @@
 package pbl.magazine.service;
 
 import lombok.RequiredArgsConstructor;
-import org.graalvm.compiler.lir.LIRInstruction;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -29,11 +28,10 @@ public class PostService {
 
     public List<PostResponseDto> getListOfPost() {
         Optional<User> user = getUser();
-        String presentUsername = "";
-        if (user.isPresent()) {
-            presentUsername = user.get().getUsername();
-        }
-        System.out.println("presentUsername = " + presentUsername);
+        User presentUser = null;
+        if (user.isPresent())
+             presentUser = user.get();
+
 
         List<Post> posts = postRepository.findAllPostByFetchJoin();
         List<PostResponseDto> responseDtoList = new ArrayList<>();
@@ -41,26 +39,22 @@ public class PostService {
         for (Post p : posts) {
             PostResponseDto responseDto = new PostResponseDto(p);
             responseDtoList.add(responseDto);
-            responseDto.changeIsLiked(isCurrentUserLiked(presentUsername, p));
+
+            if (presentUser != null) {
+                if (likeRepository.findByPostAndUser(p, presentUser).isPresent())
+                    responseDto.changeIsLiked(true);
+            }
         }
         return responseDtoList;
     }
 
-    private boolean isCurrentUserLiked(String username, Post p) {
-        if (!username.isEmpty()) {
-            for (Likes l : p.getLikes()) {
-                if (l.getUser().getUsername().equals(username))
-                    return true;
-            }
-        }
-        return false;
-    }
 
 
     public PostResponseDto getPost(Long id, User user) {
         Post post = findPost(id);
         PostResponseDto responseDto = new PostResponseDto(post);
-        responseDto.changeIsLiked(isCurrentUserLiked(user.getUsername(), post));
+        if (likeRepository.findByPostAndUser(post, user).isPresent())
+            responseDto.changeIsLiked(true);
         return responseDto;
     }
 

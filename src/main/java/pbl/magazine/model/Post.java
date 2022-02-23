@@ -3,7 +3,6 @@ package pbl.magazine.model;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 import pbl.magazine.dto.PostRequestDto;
 
 import javax.persistence.*;
@@ -33,7 +32,7 @@ public class Post extends Timestamped {
     @JoinColumn(name = "USER_ID")
     private User user;
 
-    @OneToMany(mappedBy = "post")
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private final List<Likes> likes = new ArrayList<>();
 
