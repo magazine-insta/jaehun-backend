@@ -25,8 +25,6 @@ public class SignupRequestDto {
     @NotBlank(message = "값을 입력해주세요")
     private String checkPassword;
 
-    private String userImg;
-
     @AssertTrue(message = "비밀번호에 닉네임과 같은 값은 들어가면 안됩니다")
     public boolean isContaionNickname() {
         return !password.contains(nickname);

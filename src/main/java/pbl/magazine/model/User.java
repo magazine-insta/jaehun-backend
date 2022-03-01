@@ -1,36 +1,42 @@
 package pbl.magazine.model;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.springframework.validation.annotation.Validated;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
 
 @Entity
 @Getter
-@NoArgsConstructor
+@Validated
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User extends Timestamped {
 
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "USER_ID")
     private Long id;
 
     @Column(nullable = false, unique = true)
+    @NotEmpty
     private String username;
 
     @Column(nullable = false)
+    @NotEmpty
     private String nickname;
 
     @Column(nullable = false)
+    @NotEmpty
     private String password;
 
     @Column
-    private String userImg;
+    private boolean activated;
 
-    public User(String username, String userPwd, String nickname, String userImg) {
+    @Builder
+    public User(@NonNull String username,@NonNull String nickname,@NonNull String password) {
         this.username = username;
-        this.password = userPwd;
         this.nickname = nickname;
-        this.userImg = userImg;
+        this.password = password;
+        this.activated = true;
     }
 }

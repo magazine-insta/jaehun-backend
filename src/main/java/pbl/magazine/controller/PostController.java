@@ -1,13 +1,10 @@
 package pbl.magazine.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import pbl.magazine.dto.PostRequestDto;
 import pbl.magazine.dto.PostResponseDto;
-import pbl.magazine.security.UserDetailsImpl;
 import pbl.magazine.service.PostService;
 
 import java.util.List;
@@ -24,13 +21,13 @@ public class PostController {
     }
 
     @GetMapping("/api/post/{id}")
-    public ResponseEntity<PostResponseDto> getPost(@PathVariable Long id, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return ResponseEntity.ok().body(postService.getPost(id, userDetails.getUser()));
+    public ResponseEntity<PostResponseDto> getPost(@PathVariable Long id) {
+        return ResponseEntity.ok().body(postService.getPost(id));
     }
 
     @PostMapping("/api/post")
-    public PostResponseDto writePost(@RequestBody PostRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return postService.writePost(requestDto, userDetails.getUser());
+    public PostResponseDto writePost(@RequestBody PostRequestDto requestDto) {
+        return postService.writePost(requestDto);
     }
 
     @PutMapping("/api/post/{id}")
@@ -39,12 +36,12 @@ public class PostController {
     }
 
     @PutMapping("/api/post/{id}/like")
-    public Long changeLike(@PathVariable Long id, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return postService.changeLike(id, userDetails.getUser());
+    public Long changeLike(@PathVariable Long id) {
+        return postService.changeLike(id);
     }
 
     @DeleteMapping("/api/post/{id}")
-    public Long deletePost(@PathVariable Long id) {
+    public String deletePost(@PathVariable Long id) {
         return postService.deletePost(id);
     }
 

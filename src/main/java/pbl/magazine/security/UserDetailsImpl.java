@@ -7,7 +7,7 @@ import pbl.magazine.model.User;
 import java.util.Collection;
 import java.util.Collections;
 
-public class UserDetailsImpl implements UserDetails {
+public class UserDetailsImpl implements org.springframework.security.core.userdetails.UserDetails {
 
     private final User user;
 
